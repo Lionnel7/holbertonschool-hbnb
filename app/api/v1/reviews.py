@@ -1,8 +1,7 @@
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
+from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
-facade = HBnBFacade()
 
 review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='Place ID'),
@@ -20,11 +19,6 @@ class ReviewList(Resource):
     def post(self):
         """Create a new review"""
         review_data = api.payload
-        required_fields = {'place_id', 'user_id', 'rating', 'comment'}
-        
-        if not required_fields.issubset(review_data):
-            return {'message': 'Missing required fields'}, 400
-        
         try:
             new_review = facade.create_review(review_data)
             return new_review.to_dict(), 201
@@ -44,7 +38,11 @@ class ReviewResource(Resource):
     def get(self, review_id):
         """Retrieve review details by ID"""
         review = facade.get_review(review_id)
-        return (review.to_dict(), 200) if review else ({'error': 'Review not found'}, 404)
+        if review:
+            return review.to_dict(), 200
+        else:
+            return {'error': 'Review not found'}, 404
+        
 
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
@@ -53,28 +51,23 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Update review information"""
         review_data = api.payload
-        required_fields = {'user_id', 'place_id', 'rating', 'comment'}
-        
+
         review = facade.get_review(review_id)
         if not review:
-            return {'error': 'Review not found'}, 404
-        
-        if not required_fields.issubset(review_data):
-            return {'message': 'Missing required fields'}, 400
-        
+            return {'error': 'Review not found'}, 404   
         try:
             updated_review = facade.update_review(review_id, review_data)
             return updated_review.to_dict(), 200
         except (TypeError, ValueError) as e:
             return {'error': str(e)}, 400
 
-@api.route('/places/<place_id>')
+@api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Retrieve all reviews for a specific place"""
         place_reviews = facade.get_reviews_by_place(place_id)
-        if not place_reviews:
+        if place_reviews is None:
             return {'error': 'Place not found'}, 404
-        return [review.to_dict() for review in place_reviews], 200
+        return place_reviews, 200

@@ -1,7 +1,8 @@
 import uuid
 from datetime import datetime
+from abc import ABC, abstractmethod
 
-class BaseModel:
+class BaseModel(ABC):
     def __init__(self):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
@@ -17,3 +18,7 @@ class BaseModel:
             if hasattr(self, key):
                 setattr(self, key, value)
         self.save()
+
+    @abstractmethod
+    def to_dict(self):
+        pass

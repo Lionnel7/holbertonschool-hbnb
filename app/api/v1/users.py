@@ -26,7 +26,7 @@ class UserList(Resource):
             return {'error': 'Email already registered'}, 400
         try:
             new_user = facade.create_user(user_data)
-            return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+            return new_user.to_dict(), 201
         except ValueError as e:
             return  {'error': str(e)}, 400
 
@@ -39,7 +39,7 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return user.to_dict(), 200
 
 @api.route('/')
 class UserResource(Resource):
@@ -49,12 +49,7 @@ class UserResource(Resource):
         list_all = []
         user = facade.get_all_user()
         for element in user:
-            list_all.append({
-                "id": element.id,
-                "first_name": element.first_name,
-                "last_name": element.last_name,
-                "email": element.email
-                })
+            list_all.append(element.to_dict())
         return list_all, 200
 
 @api.route('/<user_id>')
@@ -65,12 +60,13 @@ class UserChange(Resource):
     def put(self, user_id):
         """Get user details by ID"""
         new_data = api.payload
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
         if facade.get_user_by_email(new_data['email']):
             return {'error': 'Email already registered'}, 400
-        if not facade.get_user(user_id):
-            return {'error': 'User not found'}, 404
         try:
-            facade.update_user(user_id=user_id, data=new_data)
-            return {'id': user_id, 'first_name': new_data["first_name"], 'last_name': new_data["last_name"], 'email': new_data["email"]}, 200
+            new_user = facade.update_user(user_id=user_id, data=new_data)
+            return user.to_dict(), 200
         except ValueError as e:
             return  {'error': str(e)}, 400
