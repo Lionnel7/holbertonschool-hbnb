@@ -37,8 +37,6 @@ class PlaceList(Resource):
         place_data = api.payload
         if not place_data:
             return {'error': 'empty data'}, 400
-        elif not facade.get_user(place_data['owner_id']):
-            return {'error': 'user id not found'}, 400
         try:
             new_place = facade.create_place(place_data)
             return {
@@ -48,7 +46,7 @@ class PlaceList(Resource):
                 "price": new_place.price,
                 "latitude": new_place.latitude,
                 "longitude": new_place.longitude,
-                "owner_id": new_place.owner_id
+                "owner_id": new_place.owner.id
                 }, 201
         except ValueError as e:
             return  {'error': str(e)}, 400
@@ -76,22 +74,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'No place found'}, 404
-        user_place = facade.get_user(place.owner_id)
-        return {
-                "id": place.id,
-                "title": place.title,
-                "description": place.description,
-                "price": place.price,
-                "latitude": place.latitude,
-                "longitude": place.longitude,
-                "owner": {
-                    "id": user_place.id,
-                    "first_name": user_place.first_name,
-                    "last_name": user_place.last_name,
-                    "email": user_place.email
-                    },
-                "amenities": place.amenities
-                }, 200
+        return place.to_dict(), 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -103,8 +86,6 @@ class PlaceResource(Resource):
         new_data = api.payload
         if not facade.get_place(place_id):
             return {'error': 'place not found'}, 404
-        if not facade.get_user(new_data["owner_id"]):
-            return {'error': 'user not found'}, 404
         try:
             facade.update_place(place_id=place_id, place_data=new_data)
             return {"message": "Place updated successfully"}, 200
