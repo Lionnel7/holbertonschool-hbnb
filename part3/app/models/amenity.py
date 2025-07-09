@@ -1,25 +1,17 @@
-from .base_model import BaseModel
-from datetime import datetime
+# app/models/amenity.py
+from app import db # Importez l'instance de db
+from .base_model import BaseModel # Importez votre BaseModel
+# from app.models.place import place_amenity # Si la table d'association est définie ailleurs
 
 class Amenity(BaseModel):
-    def __init__(self, name):
-        super().__init__()
-        self.name = name
+    __tablename__ = 'amenities'
 
-    @property
-    def name(self):
-        return self._name
+    name = db.Column(db.String(128), nullable=False, unique=True) # Nom de l'équipement
 
-    @name.setter
-    def name(self, name):
-        if(len(name) <= 50):
-            self._name = name
-            self.save()
-        else:
-            raise ValueError ("name is too long")
+    # Relation Many-to-Many avec Place (définie sur le modèle Place)
+    # Si vous voulez un accès depuis Amenity vers Place, la backref 'places' est définie sur Place.amenities
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
+    def __repr__(self):
+        return f"<Amenity {self.name} (ID: {self.id})>"
+
+    # Supprimez la méthode __init__ si elle ne fait que des attributions de base

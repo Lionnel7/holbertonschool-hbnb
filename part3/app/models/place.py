@@ -1,93 +1,46 @@
-from .base_model import BaseModel
-from datetime import datetime
-from app.models.user import User
+# app/models/place.py
+from app import db # Importez l'instance de db
+from .base_model import BaseModel # Importez votre BaseModel
+# Si vous avez besoin d'importer d'autres modèles pour les relations (ex: User, Amenity)
+# from app.models.user import User
+# from app.models.amenity import Amenity
+
+# Définition de la table d'association pour la relation Many-to-Many Place <-> Amenity
+# Cette table doit être définie ici ou dans un fichier d'associations séparé
+# car elle n'a pas de classe de modèle propre.
+place_amenity = db.Table(
+    'place_amenity',
+    db.Column('place_id', db.String(60), db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.String(60), db.ForeignKey('amenities.id'), primary_key=True)
+)
 
 class Place(BaseModel):
-    def __init__(self, title, price, latitude, longitude, owner, amenities, description=""):
-        super().__init__()
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner = owner
-        self.reviews = []
-        self.amenities = amenities
+    __tablename__ = 'places'
 
-    def add_review(self, review):
-        self.reviews.append(review)
+    # Clé étrangère pour la relation Many-to-One avec User (l'hôte)
+    user_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
 
-    def add_amenity(self, amenity):
-        self.amenities.append(amenity)
+    name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(1024), nullable=True)
+    number_rooms = db.Column(db.Integer, default=0, nullable=False)
+    number_bathrooms = db.Column(db.Integer, default=0, nullable=False)
+    max_guest = db.Column(db.Integer, default=0, nullable=False)
+    price_by_night = db.Column(db.Integer, default=0, nullable=False)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city_id = db.Column(db.String(60), db.ForeignKey('cities.id'), nullable=False) # Assurez-vous d'avoir un modèle City si vous l'utilisez
 
-    @property
-    def owner(self):
-        return self._owner
+    # Relations (si vous les définissez ici)
+    # reviews = db.relationship('Review', backref='place', lazy=True, cascade="all, delete-orphan")
+    # amenities = db.relationship(
+    #     'Amenity', secondary=place_amenity,
+    #     backref=db.backref('places', lazy=True),
+    #     lazy='dynamic' # lazy='dynamic' pour permettre le filtrage sur la relation
+    # )
 
-    @owner.setter
-    def owner(self, owner):
-        if (isinstance(owner, User)):
-            self._owner = owner
-            self.save()
-        else:
-            raise ValueError ("owner not found")
+    def __repr__(self):
+        return f"<Place {self.name} (ID: {self.id})>"
 
-    @property
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, title):
-        if(len(title) < 101):
-            self._title = title
-            self.save()
-        else:
-            raise ValueError ("Title is not conforme to standar")
-
-    @property
-    def price(self):
-        return self._price
-
-    @price.setter
-    def price(self, price):
-        if(price >= 0):
-            self._price = price
-            self.save()
-        else:
-            raise ValueError ("price must be positif")
-    
-    @property
-    def latitude(self):
-        return self._latitude
-
-    @latitude.setter
-    def latitude(self, latitude):
-        if(latitude >= -90 and latitude <= 90):
-            self._latitude = latitude
-            self.save()
-        else:
-            raise ValueError ("latitude must be within the range of -90.0 to 90.0")
-
-    @property
-    def longitude(self):
-        return self._longitude
-
-    @longitude.setter
-    def longitude(self, longitude):
-        if(longitude >= -180 and longitude <= 180):
-            self._longitude = longitude
-            self.save()
-        else:
-            raise ValueError ("longitude must be within the range of -180.0 to 180.0")
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "description": self.description,
-            "price": self.price,
-            "latitude": self.latitude,
-            "longitude": self.longitude,
-            "owner": self.owner.to_dict(),
-            "amenities": [element.to_dict() for element in self.amenities]
-        }
+    # Supprimez la méthode __init__ si elle ne fait que des attributions de base
+    # Laissez SQLAlchemy gérer la création des objets à partir des arguments-clés.
+    # Ex: place = Place(name="Maison", description="Belle maison")

@@ -1,71 +1,20 @@
-#!/usr/bin/python3
-from datetime import datetime
-from app.models.base_model import BaseModel
-from app.models.user import User
-from app.models.place import Place
+# app/models/review.py
+from app import db # Importez l'instance de db
+from .base_model import BaseModel # Importez votre BaseModel
+# from app.models.user import User # Si vous avez besoin de User pour la relation
+# from app.models.place import Place # Si vous avez besoin de Place pour la relation
 
 class Review(BaseModel):
-    def __init__(self, place, user, rating, text):
-        """Initialize a new Review instance."""
-        super().__init__()
-        self.place = place
-        self.user = user
-        self.rating = rating
-        self.text = text
+    __tablename__ = 'reviews'
 
-    @property
-    def place(self):
-        return self._place
+    # Clés étrangères pour les relations Many-to-One
+    place_id = db.Column(db.String(60), db.ForeignKey('places.id'), nullable=False)
+    user_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
 
-    @place.setter
-    def place(self, place):
-        if isinstance(place, Place):
-            self._place = place
-            self.save()
-        else:
-            raise ValueError ("Place do not exist")
+    text = db.Column(db.String(1024), nullable=False) # Contenu de la critique
+    rating = db.Column(db.Integer, nullable=False) # Note de la critique (ex: de 1 à 5)
 
-    @property
-    def user(self):
-        return self._user
+    def __repr__(self):
+        return f"<Review {self.id} for Place {self.place_id} by User {self.user_id}>"
 
-    @user.setter
-    def user(self, user):
-        if isinstance(user, User):
-            self._user = user
-            self.save()
-        else:
-            raise ValueError ("User do not exist")
-
-    @property
-    def rating(self):
-        return self._rating
-
-    @rating.setter
-    def rating(self, rating):
-        if (rating > 0 and rating < 6):       
-            self._rating = rating
-            self.save()
-        else:
-            raise ValueError ("rating must be between 1 and 5")
-
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
-    def text(self, text):
-        if (len(text) > 0):       
-            self._text = text
-            self.save()
-        else:
-            raise ValueError ("the text must not be empty")
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'place': self.place.id,
-            'user': self.user.id,
-            'rating': self.rating,
-            'text': self.text
-        }
+    # Supprimez la méthode __init__ si elle ne fait que des attributions de base
