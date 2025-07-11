@@ -1,17 +1,32 @@
-# app/models/amenity.py
-from app import db # Importez l'instance de db
-from .base_model import BaseModel # Importez votre BaseModel
-# from app.models.place import place_amenity # Si la table d'association est définie ailleurs
+import uuid
+from datetime import datetime
+from app.models.__init__ import db
 
-class Amenity(BaseModel):
+
+class Amenity(db.Model):
+
     __tablename__ = 'amenities'
 
-    name = db.Column(db.String(128), nullable=False, unique=True) # Nom de l'équipement
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = db.Column(db.String(50), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relation Many-to-Many avec Place (définie sur le modèle Place)
-    # Si vous voulez un accès depuis Amenity vers Place, la backref 'places' est définie sur Place.amenities
+    def __init__(self, name):
+        if not name or len(name) > 50:
+            raise ValueError("Amenity name is required and must be at most 50 characters long.")
+        self.name = name
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
-    def __repr__(self):
-        return f"<Amenity {self.name} (ID: {self.id})>"
+    def save(self):
+        self.updated_at = datetime.now()
 
-    # Supprimez la méthode __init__ si elle ne fait que des attributions de base
+    def dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
+        }

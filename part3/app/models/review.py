@@ -1,20 +1,48 @@
-# app/models/review.py
-from app import db # Importez l'instance de db
-from .base_model import BaseModel # Importez votre BaseModel
-# from app.models.user import User # Si vous avez besoin de User pour la relation
-# from app.models.place import Place # Si vous avez besoin de Place pour la relation
+import uuid
+from datetime import datetime
+from app.models.__init__ import BaseModel, db
 
-class Review(BaseModel):
+class Review(db.Model):
+
     __tablename__ = 'reviews'
 
-    # Clés étrangères pour les relations Many-to-One
-    place_id = db.Column(db.String(60), db.ForeignKey('places.id'), nullable=False)
-    user_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    text = db.Column(db.String(1024), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
 
-    text = db.Column(db.String(1024), nullable=False) # Contenu de la critique
-    rating = db.Column(db.Integer, nullable=False) # Note de la critique (ex: de 1 à 5)
+    def __init__(self, text, rating, place_id, user_id, id=None):
+        if not text:
+            raise ValueError("Review text is required")
+        self.text = text
 
-    def __repr__(self):
-        return f"<Review {self.id} for Place {self.place_id} by User {self.user_id}>"
+        if rating < 1 or rating > 5:
+            raise ValueError("Rating must be between 1 and 5")
+        self.rating = rating
 
-    # Supprimez la méthode __init__ si elle ne fait que des attributions de base
+        if not isinstance(place_id, str):
+            raise ValueError("Invalid Place ID")
+        self.place_id = place_id
+
+        if not isinstance(user_id, str):
+            raise ValueError("Invalid User ID")
+        self.user_id = user_id
+
+        self.id = id or str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    def save(self):
+        self.updated_at = datetime.now()
+
+    def dict(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "place_id": self.place_id,
+            "user_id": self.user_id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
