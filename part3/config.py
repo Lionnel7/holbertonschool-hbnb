@@ -31,6 +31,9 @@ class DevelopmentConfig(Config):
     # Si vous vouliez une base de données *différente* pour le dev (ex: hbnb_dev.db),
     # vous décommenteriez et modifieriez la ligne ci-dessous :
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///hbnb_dev.db'
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestingConfig(Config):

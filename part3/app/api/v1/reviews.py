@@ -24,15 +24,14 @@ class ReviewList(Resource):
         place = facade.get_place(review_data["place_id"])
         if not place: 
             return {'error': 'wrong place id'}, 400
-        if place.owner.id == current_user["id"]:
+        if place.owner_id == current_user["id"]:
             return {'error': 'You cannot review your own place.'}, 400
         for review in place.reviews:
-            if review.user.id == current_user["id"]:
+            if review.user_id == current_user["id"]:
                 return {'error': 'You have already reviewed this place.'}, 400
         try:
             review_data["user_id"] = current_user["id"]
             new_review = facade.create_review(review_data)
-            place.add_review(new_review)
             return new_review.to_dict(), 201
         except (TypeError, ValueError) as e:
             return {'error': str(e)}, 400
@@ -41,7 +40,7 @@ class ReviewList(Resource):
     def get(self):
         """Retrieve all reviews"""
         reviews = facade.get_all_reviews()
-        return {'reviews': [review.to_dict() for review in reviews]}, 200
+        return [review.to_dict() for review in reviews], 200
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -68,7 +67,7 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
-        elif current_user["id"] != review.user.id:
+        elif current_user["id"] != review.user_id:
             return {'error': "Unauthorized action."}, 403
         try:
             facade.update_review(review_id, review_data)
@@ -85,7 +84,7 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
-        elif current_user["id"] != review.user.id:
+        elif current_user["id"] != review.user_id:
             return {'error': "Unauthorized action."}, 403
         try:
             facade.delete_review(review_id)

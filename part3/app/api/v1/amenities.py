@@ -48,6 +48,7 @@ class AmenityResource(Resource):
     @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
+    @jwt_required()
     def put(self, amenity_id):
         """Update amenity by ID"""
         current_user = get_jwt_identity()

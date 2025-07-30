@@ -5,6 +5,7 @@ from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
+<<<<<<< HEAD
 import os
 
 
@@ -12,6 +13,17 @@ import os
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
+
+
+bcrypt = Bcrypt()
+jwt = JWTManager()
+db = SQLAlchemy()
+
+from app.api.v1.auth import api as auth_ns
+from app.api.v1.users import api as users_ns
+from app.api.v1.places import api as places_ns
+from app.api.v1.reviews import api as reviews_ns
+from app.api.v1.amenities import api as amenities_ns
 
 
 def create_app(config_class="config.DevelopmentConfig"):
@@ -81,4 +93,12 @@ def create_app(config_class="config.DevelopmentConfig"):
         print("DEBUG: FIN DU BLOC DE CRÉATION DES TABLES.")
     # --- FIN DE LA SECTION CRUCIALE POUR LA CRÉATION DES TABLES ---
 
+    db.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
+
+    from app.models.user import create_first_admin
+
+    with app.app_context():
+        create_first_admin()
     return app

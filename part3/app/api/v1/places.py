@@ -97,6 +97,32 @@ place_update_parser.add_argument('amenity_ids', type=list, help='Liste des IDs d
 class PlaceList(Resource):
     @api.doc('list_places')
     @api.marshal_list_with(place_model, code=200)
+    @api.expect(place_model)
+    @api.response(201, 'Place successfully created')
+    @api.response(400, 'Invalid input data')
+    @jwt_required()
+    def post(self):
+        """Register a new place"""
+        place_data = api.payload
+        if not place_data:
+            return {'error': 'empty data'}, 400
+        current_user = get_jwt_identity()
+        place_data["owner_id"] = current_user["id"]
+        try:
+            new_place = facade.create_place(place_data)
+            return {
+                "id": new_place.id,
+                "title": new_place.title,
+                "description": new_place.description,
+                "price": new_place.price,
+                "latitude": new_place.latitude,
+                "longitude": new_place.longitude,
+                "owner_id": new_place.owner_id
+                }, 201
+        except ValueError as e:
+            return  {'error': str(e)}, 400
+
+    @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Récupère la liste de tous les lieux."""
         places = Place.query.all()
