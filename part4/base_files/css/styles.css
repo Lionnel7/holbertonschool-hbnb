@@ -1,0 +1,90 @@
+document.addEventListener('DOMContentLoaded', () => {
+    
+    function updateHeaderVisibility() {
+        
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userEmail = localStorage.getItem('userEmail');
+
+        const loginLink = document.getElementById('login-link');
+        let logoutButton = document.getElementById('logout-button');
+        let welcomeMessage = document.getElementById('welcome-message');
+        const navActions = document.querySelector('header .nav-actions');
+
+        if (isLoggedIn) {
+            
+            if (loginLink) {
+                loginLink.style.display = 'none'; // Masque le lien "Login"
+            }
+
+            // Crée ou affiche le bouton "Logout"
+            if (!logoutButton) {
+                logoutButton = document.createElement('a');
+                logoutButton.id = 'logout-button';
+                logoutButton.className = 'login-button'; // Réutilise les styles du bouton login
+                logoutButton.href = '#'; // Lien factice pour la déconnexion
+                logoutButton.textContent = 'Logout';
+                navActions.appendChild(logoutButton);
+            } else {
+                logoutButton.style.display = 'inline-block'; // S'assure qu'il est visible
+            }
+
+            
+            if (!welcomeMessage) {
+                welcomeMessage = document.createElement('span');
+                welcomeMessage.id = 'welcome-message';
+                welcomeMessage.className = 'welcome-message'; // Nouvelle classe pour le style CSS
+             
+            }
+            if (userEmail) {
+                welcomeMessage.textContent = `Welcome ${userEmail}`;
+                welcomeMessage.style.display = 'inline-block'; // S'assure qu'il est visible
+            } else {
+                welcomeMessage.style.display = 'none';
+            }
+            
+            
+            if (logoutButton) {
+                logoutButton.onclick = (event) => {
+                    event.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    updateHeaderVisibility();
+                    window.location.href = 'index.html';
+                };
+            }
+
+        } else {
+            
+            if (loginLink) {
+                loginLink.style.display = 'inline-block';
+            }
+            if (logoutButton) {
+                logoutButton.style.display = 'none';
+            }
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+        }
+    }
+
+    const loginForm = document.getElementById('login-form');
+    if (loginForm)
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email === 'test@example.com' && password === 'password123') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                alert('Connexion réussie !');
+                window.location.href = 'index.html';
+            } else {
+                alert('Email ou mot de passe incorrect.');
+            }
+        });
+    }
+}
+
+});

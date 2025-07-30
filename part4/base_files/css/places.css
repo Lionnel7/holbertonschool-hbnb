@@ -1,0 +1,184 @@
+/* Reset de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Tu as un font-family dans login-from.css, pour cohérence tu pourrais le mettre ici aussi ou dans un fichier global */
+}
+ 
+body {
+    font-family: Arial, sans-serif; /* Conserve Arial pour l'instant, ou unifie-le */
+    margin: 0;
+    background: #f5f5f5;
+    min-height: 100vh; /* Pour pousser le footer en bas */
+    display: flex; /* Pour pousser le footer en bas */
+    flex-direction: column; /* Pour pousser le footer en bas */
+}
+ 
+/* Header styles (copiés de styles.css pour cohérence) */
+header {
+    background-color: #ff9900;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+ 
+.logo {
+    height: 40px;
+}
+ 
+.nav-actions {
+    display: flex;
+    align-items: center;
+}
+ 
+.login-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+ 
+.login-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+ 
+/* Main content area */
+main {
+    flex: 1; /* Permet à main de prendre l'espace disponible */
+}
+
+.container {
+    padding: 20px;
+    max-width: 900px; /* Limite la largeur du contenu pour une meilleure lisibilité */
+    margin: 20px auto; /* Centre le conteneur et ajoute de la marge */
+    background-color: white; /* Fond blanc pour le conteneur principal */
+    border-radius: 10px; /* Bords arrondis pour le conteneur */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); /* Légère ombre */
+}
+ 
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px; /* Marge sous les titres */
+    color: #333;
+}
+ 
+/* Styles pour les détails du lieu */
+.place-details {
+    margin-bottom: 30px;
+}
+
+.place-info { /* Ancien .card#place-info */
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu comme l'image */
+    text-align: center; /* Centre le texte */
+}
+
+.place-info h3 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.place-info p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.place-info strong {
+    color: #333;
+}
+
+.place-image-details {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+ 
+/* Styles pour les commentaires (review-card) */
+.review-card { /* Ancien .card.review */
+    background: white;
+    /* Paramètres fixes */
+    margin: 20px; /* Marge de 20px */
+    padding: 10px; /* Padding de 10px */
+    border: 1px solid #ddd; /* Bordure de 1px solide #ddd */
+    border-radius: 10px; /* Border radius de 10px */
+    /* Fin des paramètres fixes */
+    box-shadow: 0 0 8px rgba(0,0,0,0.08); /* Légère ombre pour les cartes de commentaire */
+    margin-bottom: 20px; /* Espace entre les commentaires */
+}
+
+.review-card p {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+ 
+/* Étoiles interactives */
+.stars {
+    display: inline-block;
+    direction: ltr;
+    font-size: 20px;
+    unicode-bidi: bidi-override;
+    color: #ddd;
+}
+ 
+.stars span {
+    display: inline-block;
+    cursor: pointer;
+    transition: color 0.2s;
+    /* Pour afficher les étoiles, vous pouvez utiliser des entités HTML comme &#9733; */
+    /* Par exemple, dans le JS pour 4 étoiles: '&#9733;&#9733;&#9733;&#9733;&#9734;' */
+}
+ 
+.stars span.hover,
+.stars span.selected {
+    color: gold;
+}
+
+/* Style pour le bouton "Add a Review" */
+#add-review-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.add-review-button {
+    background-color: #4CAF50; /* Un vert pour "ajouter" */
+    color: white;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border: none;
+}
+
+.add-review-button:hover {
+    background-color: #45a049;
+}
+ 
+/* Footer styles (maintenus et copiés de styles.css pour cohérence) */
+footer {
+    text-align: center;
+    background-color: #ff9900;
+    padding: 1rem;
+    color: white;
+    width: 100%;
+}

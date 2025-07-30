@@ -1,0 +1,104 @@
+/* Reset de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Tu as choisi Segoe UI ici, gardons-le */
+}
+ 
+body {
+    /* Ajout pour le positionnement du footer */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
+    background: linear-gradient(to right, #667eea, #764ba2); /* Garde ce dégradé */
+    /* align-items: center; /* Ces deux lignes sont retirées car elles centrent tout le body, ce qui n'est pas souhaitable avec header/footer */
+    /* justify-content: center; */
+}
+ 
+main {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    margin: auto; /* Centre la main verticalement et horizontalement */
+    flex-grow: 1; /* Permet à main de prendre l'espace disponible */
+    display: flex; /* Pour centrer le formulaire à l'intérieur de main si main est plus grand que le formulaire */
+    align-items: center; /* Centre verticalement le formulaire dans main */
+    justify-content: center; /* Centre horizontalement le formulaire dans main */
+}
+ 
+/* Header styles (copiés depuis styles.css pour cohérence) */
+header {
+    background-color: #ff9900; /* Orange de ton styles.css */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* S'assure que le header prend toute la largeur */
+}
+ 
+.logo {
+    height: 40px; /* Taille du logo */
+}
+ 
+/* Titre du formulaire */
+form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+ 
+/* Labels */
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+ 
+/* Champs de texte */
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    transition: border-color 0.3s;
+}
+ 
+form input:focus {
+    border-color: #667eea;
+    outline: none;
+}
+ 
+/* Bouton */
+form button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #667eea; /* Couleur du bouton */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+ 
+form button:hover {
+    background-color: #5a67d8;
+}
+
+/* Footer styles (copiés depuis styles.css pour cohérence) */
+footer {
+    background: #ff9900; /* Orange de ton styles.css */
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    width: 100%; /* S'assure que le footer prend toute la largeur */
+}
